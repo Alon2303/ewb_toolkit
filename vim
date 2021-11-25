@@ -1,1 +1,0 @@
-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 /home/su6n3t/Documents/t.txt
