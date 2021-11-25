@@ -9,7 +9,9 @@ constructor () {
 
 }
 
-set(){}
+set(key, value){
+	client.set(key, value, redis.print);
+}
 
 get(){}
 
