@@ -1,4 +1,6 @@
 const devConfig = require("../configs/development.json");
+const redis = require("redis");
+const client = redis.createClient();
 
 class RedisClient {
 
