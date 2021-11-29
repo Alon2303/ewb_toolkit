@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 const mockDb = require("./mockDb");
-const {auth} = require("./authentication/auth");
+const router = express.Router();
+const vlntrs = require("./routes/volunteers");
 
 app.use(express.json());
 app.use(express.urlencoded());
-const rc = require("./redis/redisController");
-app.post("/", auth, (req, res) => res.json(mockDb))
+
+app.use("/vlntrs", vlntrs);
+
 
 app.listen(3000, () => console.log("App listenning..."))

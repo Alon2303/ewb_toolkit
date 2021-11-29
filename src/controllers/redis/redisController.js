@@ -13,7 +13,10 @@ set(key, value){
 	client.set(key, value, redis.print);
 }
 
-get(){}
+get(){
+	client.get(key, redis.print);
+
+}
 
 setexp(){}
 
