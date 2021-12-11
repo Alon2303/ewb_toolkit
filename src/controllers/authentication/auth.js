@@ -1,5 +1,6 @@
 const mockDb = require("../../mockDb");
 const jwt = require("jsonwebtoken");
+const moment = require("moment");
 
 const auth = (req, res, next) => {
 	const { email } = req.body.user;
@@ -11,6 +12,11 @@ const auth = (req, res, next) => {
 		throw new Error("User does not exist!");
 	}
 
+}
+
+const createToken () {
+	const 
+	
 }
 
 module.exports = { auth }
