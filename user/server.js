@@ -6,7 +6,6 @@ const user = require('./routes/user');
 const PORT = 3504
 
 server.use('/user', user);
-server.get('/test', (req, res) => {console.log("test"); res.send("test")})
 
 
 server.listen(PORT,() => {
