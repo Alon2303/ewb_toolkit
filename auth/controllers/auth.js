@@ -1,5 +1,5 @@
 const logger = require('../../utils/logger/logger');
-const devJson = require('../../development.json');
+const devJson = require('../../configs/development.json');
 const { getUser } = require('../db/users');
 
 const authUser = async (req, res) => {

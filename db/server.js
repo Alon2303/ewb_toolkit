@@ -1,7 +1,7 @@
 const express = require('express');
 const server = express();
 const logger = require('../utils/logger/logger');
-const devJson = require('../development.json');
+const devJson = require('../configs/development.json');
 
 const PORT = 3506
 
