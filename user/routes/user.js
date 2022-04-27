@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUser } = require('../../auth/db/users');
+const { getUser } = require('../controllers/user');
 
 
 router.get('/getUser', async (req, res) => {
