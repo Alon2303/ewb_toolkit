@@ -1,0 +1,63 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch auth server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server/auth/server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch files server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server/files/server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch reports server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server/reports/server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch text chat server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server/textChat/server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch user server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server/user/server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch video chat server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server/vidoeChat/server.js"
+        },
+
+    ]
+}
