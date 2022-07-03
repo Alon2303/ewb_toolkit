@@ -5,10 +5,9 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import { Link } from "react-router-dom";
+import Volunteers from './components/Volunteers/Volunteers.jsx'
 
 export const mainListItems = (
   <div>
@@ -23,8 +22,9 @@ export const mainListItems = (
         <ShoppingCartIcon />
       </ListItemIcon>
       <ListItemText primary="Volunteers" />
+      <Link to="/Volunteers"></Link>
     </ListItem>
-    <ListItem button>
+    {/* <ListItem button>
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
@@ -41,7 +41,7 @@ export const mainListItems = (
         <LayersIcon />
       </ListItemIcon>
       <ListItemText primary="Projects" />
-    </ListItem>
+    </ListItem> */}
   </div>
 );
 
@@ -54,23 +54,23 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="Upload File/s" />
     </ListItem>
-    <ListItem button>
+    {/* <ListItem button>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Search Files" />
-    </ListItem>
-    <ListItem button>
+    </ListItem> */}
+    {/* <ListItem button>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Chat" />
-    </ListItem>
-    <ListItem button>
+    </ListItem> */}
+    {/* <ListItem button>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Tools" />
-    </ListItem>
+    </ListItem> */}
   </div>
 );
