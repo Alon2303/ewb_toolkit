@@ -3,6 +3,7 @@ const server = express();
 const logger = require('../utils/logger/logger');
 var bodyParser = require('body-parser')
 const files = require('./routes/files')
+require('dotenv').config();
 
 const PORT = 3501
 

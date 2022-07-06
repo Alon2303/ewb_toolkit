@@ -1,15 +1,15 @@
 const AWS = require('aws-sdk')
 const logger = require('../../utils/logger/logger');
+require('dotenv').config();
 
-const LOG_PATH = './logs/log.txt'
-const S3_BUCKET ='ewb-test-bucket';
-const REGION ='eu-west-1';
-const FOLDER ='BGU/';
-const TEST_FILE = './testfile.jpg';
+const S3_BUCKET = process.env.S3_BUCKET;
+const REGION = process.env.REGION;
+const accessKeyId =  process.env.ACCESS_KEY_ID;
+const secretAccessKey = process.env.SECRET_ACCESS_KEY;
 
 AWS.config.update({
-    accessKeyId: 'AKIAYM6DJEGTGRHNNJQH',
-    secretAccessKey: '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'
+    accessKeyId,
+    secretAccessKey
 })
 
 const s3 = new AWS.S3({
