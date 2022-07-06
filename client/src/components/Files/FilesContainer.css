@@ -1,0 +1,30 @@
+.files-container{
+    min-width: 500px;
+    min-height: 500px;
+    background-color: white;
+}
+
+.files-container td{
+    background-color: white;
+}
+
+.file{
+    width: 120px;
+    padding: 2px;
+
+}
+
+.files-container h2 {
+    text-align: center;
+}
+
+.files-container td {
+    width: 120px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.up-arrow {
+    vertical-align: middle;
+    cursor: pointer;
+}

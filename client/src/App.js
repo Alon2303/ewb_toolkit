@@ -4,6 +4,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {Motion, spring} from 'react-motion';
 import NavigationPanel from './components/Signin/NavigationPanel';
 import Modal from './components/Signin/Modal';
+import FilesContainer from './components/Files/FilesContainer';
 
 class App extends Component {
 
@@ -35,7 +36,8 @@ class App extends Component {
 			child = (
 				<div className="App_test">
 					<NavigationPanel></NavigationPanel>
-					<Modal onSubmit={this.handleSubmit}/>
+					{/* <Modal onSubmit={this.handleSubmit}/> */}
+					<FilesContainer></FilesContainer>
 				</div>
 			);
 		}
