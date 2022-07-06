@@ -29,6 +29,14 @@ export default function File(props) {
             var url = await axios.get(`http://localhost:3501/${props.filename.replaceAll('/','%2F')}`);
             console.log(url.data);
             props.resetSelection(props.filename);
+
+            const ref = window.URL.createObjectURL(new Blob([url.data]));
+            const link = document.createElement('a');
+            link.href = ref;
+            link.setAttribute('download', props.filename.substring(props.currentFolder.length));
+            document.body.appendChild(link);
+            link.click();
+
             return;    
         }
         else if (event.detail == 1){
