@@ -1,7 +1,9 @@
-.files-container{
+.files-container {
     min-width: 500px;
     min-height: 500px;
     background-color: white;
+    order: 2;
+    flex-grow: 1;
 }
 
 .files-container td{

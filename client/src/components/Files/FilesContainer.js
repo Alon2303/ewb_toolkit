@@ -4,6 +4,7 @@ import './FilesContainer.css'
 import Folder from './Folder'
 import axios from 'axios'
 import {FaLevelUp} from 'react-icons/lib/fa'
+import FilesSidebar from './FilesSidebar';
 
 const ROWSIZE = 4;
 
@@ -117,6 +118,7 @@ export default class FilesContainer extends Component {
 
     render() {
         return (
+            <>
             <div className='files-container'>
                 <h2>
                     {this.state.currentFolder != '' && <FaLevelUp className='up-arrow' onClick={(e)=>this.levelUp(e)}></FaLevelUp>}
@@ -164,6 +166,8 @@ export default class FilesContainer extends Component {
                     </tbody>
                 </table>
             </div>
+            <FilesSidebar show={true}></FilesSidebar>
+            </>
         )
     }
 }
