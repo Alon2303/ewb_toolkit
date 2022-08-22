@@ -43,8 +43,8 @@ const s3 = new AWS.S3({
 const createSignedUrl = async (method, fileName) => {
     const params = {
         Key: fileName,
-        Expires: 120 // In seconds
-      }
+        Expires: 10 // TTL (seconds)
+    }
     var url = s3.getSignedUrl(method == 'get' ? 'getObject' : 'putObject', params);
     console.log('The URL is', url);
     return url; 
@@ -65,7 +65,15 @@ const listFiles = async (folder) =>{
     return fileNames;
 }
 
+const deleteByKey = async (Key) => {
+    console.log('deleting', Key)
+    var deleted = s3.deleteObject({Key}).promise();
+    console.log(deleted);
+    return deleted;
+}
+
 // module.exports.uploadFile = uploadFile;
 module.exports.createSignedUrl = createSignedUrl;
 module.exports.listFiles = listFiles;
+module.exports.deleteByKey = deleteByKey;
 // module.exports.signedPutUrl = signedPutUrl;

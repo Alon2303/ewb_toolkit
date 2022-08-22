@@ -11,8 +11,16 @@ server.use(bodyParser.urlencoded({
     extended: true
   }));
 
+server.use(bodyParser.json());
+
+server.use(function(req, res, next) {
+    console.log(req.body)
+    next();
+});
 server.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "*");
+    res.header("Access-Control-Allow-Headers", "*");
     next();
 });
 

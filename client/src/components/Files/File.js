@@ -51,7 +51,7 @@ export default function File(props) {
     }
 
     return (
-        <div className={`file${selected ? ' selected' : ''}`} onClick={handleClick} onContextMenu={openContextMenu}>
+        <div className={`file${selected ? ' selected' : ''}`} onClick={(event)=>props.handleFileClick(event)} onContextMenu={openContextMenu}>
             <IoDocument size={60}></IoDocument>
             <br/>
             <pre>{shortName}</pre>
