@@ -8,9 +8,10 @@
     align-items: center;
     justify-content: flex-start;
     background-color: #f2f4f7;
-    max-height: 420px;
+    max-height: 720px;
     overflow: auto;
     padding-top: 60px;
+    overflow-x: hidden;
 }
 
 .files-sidebar button {
@@ -42,7 +43,12 @@
     background-color: #3ac75d;
 }
 
-.files-sidebar h4{
+.files-sidebar h4 {
     padding: 5px;
-    margin: 10px;
+    margin: 8px;
+    border-width: 1px;
+    border: solid;
+    border-bottom-style: none;
+    border-color: cornflowerblue;
+    font-size: 15px;
 }

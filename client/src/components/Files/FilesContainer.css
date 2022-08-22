@@ -1,8 +1,8 @@
 .files-container {
-    min-width: 550px;
-    max-width: 550px;
-    min-height: 500px;
-    max-height: 500px;
+    min-width: 850px;
+    max-width: 1050px;
+    min-height: 800px;
+    max-height: 800px;
     overflow: auto;
     background-color: white;
     order: 2;

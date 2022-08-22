@@ -7,7 +7,7 @@ import {FaLevelUp} from 'react-icons/lib/fa'
 import FilesSidebar from './FilesSidebar';
 import { CircularProgress, Fade } from '@mui/material';
 
-const ROWSIZE = 4;
+const ROWSIZE = 6;
 
 var updateLoop;
 
