@@ -230,7 +230,7 @@ export default class FilesContainer extends Component {
 
     render() {
         return (
-            <Grid container>
+    <Grid container>
         <Grid item xs={12}>
           <AppBar />
         </Grid>
@@ -240,7 +240,31 @@ export default class FilesContainer extends Component {
         </Grid>
         <Grid item xs={10}>
         <>
-            <div className={`files-container${this.state.loading ? ' darken': ''}`}
+        <Grid 
+            container
+            direction="column"
+            justifyContent="flex-start"
+            alignItems="stretch"
+        >
+        <Grid item xs={12}>
+        <FilesSidebar show={this.state.selectedCount > 0} 
+            files={this.state.filesDict} 
+            currentFolder={this.state.currentFolder}
+            downloadFiles={(event, filesList)=>this.downloadFiles(event, filesList)}
+            deleteFiles={(event, filesList)=>this.deleteFiles(event, filesList)}
+            uploadClick={()=>this.openFileDialog()}
+            >
+                <input
+                    style={{display: 'none'}}
+                    ref={this.inputRef}
+                    type="file"
+                    onChange={this.handleFileChange}
+                    multiple
+                />
+            </FilesSidebar>
+        </Grid>
+        <Grid item xs={12}>
+        <div className={`files-container${this.state.loading ? ' darken': ''}`}
             onClick={()=>this.resetSelection()} 
             // style={{backgroundColor:this.bgcolor()}}
             >
@@ -301,7 +325,9 @@ export default class FilesContainer extends Component {
                     </tbody>
                 </table>
             </div>
-            <FilesSidebar show={this.state.selectedCount > 0} 
+        </Grid>
+        </Grid>
+        {/* <FilesSidebar show={this.state.selectedCount > 0} 
             files={this.state.filesDict} 
             currentFolder={this.state.currentFolder}
             downloadFiles={(event, filesList)=>this.downloadFiles(event, filesList)}
@@ -316,6 +342,67 @@ export default class FilesContainer extends Component {
                     multiple
                 />
             </FilesSidebar>
+            <div className={`files-container${this.state.loading ? ' darken': ''}`}
+            onClick={()=>this.resetSelection()} 
+            // style={{backgroundColor:this.bgcolor()}}
+            >
+                <h2>
+                    {this.state.currentFolder != '' && <FaLevelUp className='up-arrow' onClick={(e)=>this.levelUp(e)}></FaLevelUp>}
+                    {this.getShortFolderName()}
+                </h2>
+                <Fade className='fade-box'
+                    in={this.state.loading}
+                    style={{
+                        transitionDelay: this.state.loading ? '100ms' : '0ms',
+                    }}
+                    unmountOnExit
+                    >
+                    <CircularProgress />
+                </Fade>
+                <table>
+                    <tbody>
+                        {this.state.foldersArray.map((row, i) => {
+                            return (
+                                <tr key={`row_${i}`}>
+                                    {row.map((folder, j)=>{
+                                        return (
+                                            <td key={`folder${i}_${j}`}>
+                                                <Folder 
+                                                    foldername={folder} 
+                                                    currentFolder={this.state.currentFolder} 
+                                                    folderClicked={(folderName)=> this.changeFolder(folderName)}
+                                                >
+                                                </Folder>
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        })}
+                        {this.state.filesArray.map((row, i) => {
+                            return (
+                                <tr key={`row_${i}`}>
+                                    {row.map((file, j)=>{
+                                        if (this.state.filesDict[file])
+                                        return (
+                                            <td key={`file_${i}_${j}`}>
+                                                <File filename={file} 
+                                                currentFolder={this.state.currentFolder} 
+                                                selected={this.state.filesDict[file].selected}
+                                                selectFile = {(filename, multiselect)=> this.selectFile(filename, multiselect)}
+                                                resetSelection = {(filename)=>this.resetSelection(filename)}
+                                                handleFileClick = {(event)=>this.handleFileClick(event, file)}
+                                                >
+                                                </File>
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div> */}
             </>
         </Grid>
         </Grid>

@@ -1,10 +1,8 @@
 .files-container {
-    min-width: 850px;
-    max-width: 1050px;
-    min-height: 600px;
-    max-height: 600px;
+    min-width: 100wh;
+    min-height: 100vh;
     overflow: auto;
-    background-color: white;
+    background-color: #fff;
     order: 2;
     flex-grow: 1;
 }

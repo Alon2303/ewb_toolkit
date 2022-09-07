@@ -1,7 +1,7 @@
 import React from 'react'
 import './FilesSidebar.css'
 import {MdFileDownload, MdDeleteForever, MdFileUpload} from 'react-icons/lib/md'
-
+import Grid from "@mui/material/Grid";
 
 export default function FilesSidebar(props) {
     const {show, files} = props;
@@ -16,7 +16,14 @@ export default function FilesSidebar(props) {
     }
 
     return (
+        <Grid
+            container
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="center"
+        >
         <>
+        <Grid item xs={12}>
         <div className='files-sidebar'>
             {show ? <>
                 <button className='download-button'
@@ -38,6 +45,8 @@ export default function FilesSidebar(props) {
             }
             {props.children}
         </div>
+        </Grid>
         </>
+        </Grid>
     )
 }

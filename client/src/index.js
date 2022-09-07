@@ -17,7 +17,6 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="volunteers" element={<VolunteersTable />} />
-      <Route path="expenses" element={<Expenses />} />
       <Route path="folder" element={<FilesContainer />} />
       <Route
       path="*"
