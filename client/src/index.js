@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import './index.css';
 import App from './App';
-import Expenses from "./components/expenses";
 import VolunteersTable from "./components/table/Table";
 import FilesContainer from './components/Files/FilesContainer'
 
