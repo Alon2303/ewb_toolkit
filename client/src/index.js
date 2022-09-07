@@ -1,15 +1,34 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import ReactDOM from 'react-dom/client';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 import './index.css';
+import App from './App';
+import Expenses from "./components/expenses";
+import VolunteersTable from "./components/table/Table";
+import FilesContainer from './components/Files/FilesContainer'
 
-// import { createRoot } from 'react-dom/client';
-// const container = document.getElementById('root');
-// const root = createRoot(container);
-// root.render(<App />);
-
-
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="volunteers" element={<VolunteersTable />} />
+      <Route path="expenses" element={<Expenses />} />
+      <Route path="folder" element={<FilesContainer />} />
+      <Route
+      path="*"
+      element={
+        <main style={{ padding: "1rem" }}>
+          <p>There's nothing here!</p>
+        </main>
+      }
+    />
+    </Routes>
+  </BrowserRouter>
+  </React.StrictMode>
 );

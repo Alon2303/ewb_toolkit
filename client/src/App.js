@@ -1,53 +1,39 @@
-import React, {Component} from 'react';
-import './App.css';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import {Motion, spring} from 'react-motion';
-import NavigationPanel from './components/Signin/NavigationPanel';
-import Modal from './components/Signin/Modal';
-import FilesContainer from './components/Files/FilesContainer';
+import React, { useState } from 'react';
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import {
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
-class App extends Component {
+import SideBar from "./components/sidebar/SideBar";
+import AppBar from "./components/appBar/AppBar";
+import VolunteersTable from "./components/table/Table";
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			mounted: false
-		};
-	}
+function App(props) {
+  const [state, setState] = useState('VolunteersTable');
+  const test = () => {
 
-	componentDidMount() {
-		this.setState({ mounted: true });
-	}
-	
-	handleSubmit = (e) => {
-		console.log(e)
-		this.setState({ mounted: false });
-		e.preventDefault();
-		e.stopPropagation();
-		
-	}
+  }
 
-	render() {
-		const {mounted} = this.state;
-
-		let child;
-
-		if(mounted) {
-			child = (
-				<div className="App_test">
-					<NavigationPanel></NavigationPanel>
-					{/* <Modal onSubmit={this.handleSubmit}/> */}
-					<FilesContainer></FilesContainer>
-				</div>
-			);
-		}
-		
-		return(
-			<div className="App">
-				{child}
-			</div>
-		);
-	}
+  return (
+    <div className="App">
+      <Grid container>
+        <Grid item xs={12}>
+          <AppBar />
+        </Grid>
+        <Grid container direction={'row'}> 
+        <Grid item xs={2}>
+          <SideBar />
+        </Grid>
+        <Grid item xs={10}>
+        </Grid>
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
 
 export default App;

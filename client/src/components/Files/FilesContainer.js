@@ -6,6 +6,9 @@ import axios from 'axios'
 import {FaLevelUp} from 'react-icons/lib/fa'
 import FilesSidebar from './FilesSidebar';
 import { CircularProgress, Fade } from '@mui/material';
+import Grid from "@mui/material/Grid";
+import SideBar from "../sidebar/SideBar";
+import AppBar from "../appBar/AppBar";
 
 const ROWSIZE = 6;
 
@@ -227,7 +230,16 @@ export default class FilesContainer extends Component {
 
     render() {
         return (
-            <>
+            <Grid container>
+        <Grid item xs={12}>
+          <AppBar />
+        </Grid>
+        <Grid container direction={'row'}> 
+        <Grid item xs={2}>
+          <SideBar />
+        </Grid>
+        <Grid item xs={10}>
+        <>
             <div className={`files-container${this.state.loading ? ' darken': ''}`}
             onClick={()=>this.resetSelection()} 
             // style={{backgroundColor:this.bgcolor()}}
@@ -305,6 +317,9 @@ export default class FilesContainer extends Component {
                 />
             </FilesSidebar>
             </>
+        </Grid>
+        </Grid>
+      </Grid>
         )
     }
 }
