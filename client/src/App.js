@@ -10,7 +10,6 @@ import {
 
 import SideBar from "./components/sidebar/SideBar";
 import AppBar from "./components/appBar/AppBar";
-import VolunteersTable from "./components/table/Table";
 
 function App(props) {
   const [state, setState] = useState('VolunteersTable');

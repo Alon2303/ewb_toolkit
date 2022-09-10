@@ -63,8 +63,8 @@ function Row(props) {
         <TableCell align="left">{row.name}</TableCell>
         <TableCell align="left">{row.surname}</TableCell>
         <TableCell align="left">{row.faculty}</TableCell>
-        <TableCell>{<ModeEditIcon />}</TableCell>
-        <TableCell>{<DeleteForeverIcon />}</TableCell>
+        <TableCell>{<ModeEditIcon color={"primary"} />}</TableCell>
+        <TableCell>{<DeleteForeverIcon color={"primary"} />}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>

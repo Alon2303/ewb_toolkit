@@ -1,15 +1,10 @@
 .files-container {
-    min-width: 100wh;
-    min-height: 100vh;
+    min-height: 81vh;
     overflow: auto;
     background-color: #fff;
     order: 2;
     flex-grow: 1;
 }
-
-/* .files-container td{
-    background-color: white;
-} */
 
 .file{
     width: 120px;

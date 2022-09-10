@@ -1,19 +1,8 @@
-.file{
+/* .file{
     text-align: center;
-    color: royalblue;
-    font-weight: bolder;
     font-size: 17px;
     border-radius: 10px;
-}
-.file pre{
-    text-align: center;
-    margin : 10px;
-    height: 2rem;
-}
-
-.file svg{
-    filter: drop-shadow(1px 1px 1px purple);
-}
+} */
 
 .file:hover{
     background-color: rgb(238, 238, 238);
@@ -21,7 +10,7 @@
 
 .file.selected{
     background-color: rgb(219, 219, 219);
-}
+} 
 
 
 

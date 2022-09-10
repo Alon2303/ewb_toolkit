@@ -1,7 +1,7 @@
 import React from 'react'
-import {MdFolder} from 'react-icons/lib/md';
-import './Folder.css'
-import axios from 'axios';
+// import {MdFolder} from 'react-icons/lib/md';
+import FolderIcon from '@mui/icons-material/Folder';
+import './Folder.css';
 
 export default function File(props) {
 
@@ -16,7 +16,7 @@ export default function File(props) {
 
     return (
         <div className='folder' onClick={handleClick}>
-            <MdFolder size={70}></MdFolder>
+            <FolderIcon color="primary"/>
             <br/>
             <pre>{folderName}</pre>
         </div>

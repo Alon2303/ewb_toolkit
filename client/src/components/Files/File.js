@@ -1,11 +1,33 @@
-import React from 'react'
-import {IoDocument} from 'react-icons/lib/io';
+import React, {useState} from 'react'
+import { makeStyles } from '@mui/styles';
+import DescriptionSharpIcon from '@mui/icons-material/DescriptionSharp';
 import './File.css'
 import axios from 'axios';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
+const useStyles = makeStyles({
+    root: {
+        maxWidth: 310,
+        transition: "transform 0.15s ease-in-out"
+    },
+    cardHovered: {
+        transform: "scale3d(1.05, 1.05, 1)"
+    }
+});
 
 const LINE_LEN = 9;
 export default function File(props) {
+    const classes = useStyles();
+    const [state, setState] = useState({
+    raised:false,
+    shadow:1,
+})
+    console.log(props);
 
     const selected = props.selected;
 
@@ -39,7 +61,7 @@ export default function File(props) {
 
             return;    
         }
-        else if (event.detail == 1){
+        else if (event.detail === 1){
             props.selectFile(props.filename, event.ctrlKey);
             return;
         }
@@ -51,10 +73,22 @@ export default function File(props) {
     }
 
     return (
-        <div className={`file${selected ? ' selected' : ''}`} onClick={(event)=>props.handleFileClick(event)} onContextMenu={openContextMenu}>
-            <IoDocument size={60}></IoDocument>
-            <br/>
-            <pre>{shortName}</pre>
-        </div>
+    <Card sx={{ fontSize: 16 }} className={classes.root} 
+    classes={{root: state.raised ? classes.cardHovered : ""}}
+    onMouseOver={()=>setState({ raised: true, shadow:3})} 
+    onMouseOut={()=>setState({ raised:false, shadow:1 })} 
+    raised={state.raised} zdepth={state.shadow}>
+    <CardContent>
+        <DescriptionSharpIcon sx={{ fontSize: 120 }} color="primary" />
+        <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
+        {props.filename}
+        </Typography>
+    </CardContent>
+    <CardActions>
+        <Button size="small">Preview</Button>
+        <Button size="small">Download</Button>
+        <Button size="small">Delete</Button>
+    </CardActions>
+    </Card>
     )
 }
