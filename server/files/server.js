@@ -9,7 +9,7 @@ const PORT = 3501
 
 server.use(bodyParser.urlencoded({
     extended: true
-  }));
+}));
 
 server.use(bodyParser.json());
 

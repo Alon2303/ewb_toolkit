@@ -53,16 +53,10 @@ const createSignedUrl = async (method, fileName) => {
 const listFiles = async (folder) =>{
     var params = {
         Prefix: folder  //folder name
-      };
-    var files = await s3.listObjectsV2(params, function(err, data) {
-        if (err) 
-            console.log(err, err.stack); // an error occurred
-        // else{    
-        //     console.log(data.Contents.map(file => file.Key))
-        // }
-    }).promise();
-    const fileNames = files.Contents.map(file => file.Key);
-    return fileNames;
+    };
+    // var files = await s3.listObjectsV2(params).promise();
+    // const fileNames = files.Contents.map(file => file.Key);
+    return ['Yearly Summary-2021.jpg', 'Trip Summary.txt', 'Yearly Summary-2020.jpg', 'Yearly Summary-2022.jpg'];//fileNames;
 }
 
 const deleteByKey = async (Key) => {
