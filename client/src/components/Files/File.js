@@ -73,7 +73,7 @@ export default function File(props) {
     }
 
     return (
-    <Card sx={{ fontSize: 16 }} className={classes.root} 
+    <Card className={classes.root} 
     classes={{root: state.raised ? classes.cardHovered : ""}}
     onMouseOver={()=>setState({ raised: true, shadow:3})} 
     onMouseOut={()=>setState({ raised:false, shadow:1 })} 
