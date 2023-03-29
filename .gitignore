@@ -1,5 +1,5 @@
 node_modules
 server/files/large_test.mp4
-server/files/log.txt
+**/server/logs/
 server/files/testfile.jpg
 server/files/.env
