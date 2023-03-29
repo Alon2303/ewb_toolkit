@@ -1,5 +1,0 @@
-Sat, 02 Jul 2022 17:01:28 GMT | Debug | Authentication server listening on port 3500
-Mon, 01 Aug 2022 17:27:41 GMT | Debug | Files server listening on port 3501
-Mon, 01 Aug 2022 17:30:43 GMT | Debug | Files server listening on port 3501
-Mon, 01 Aug 2022 17:32:59 GMT | Debug | Files server listening on port 3501
-Mon, 01 Aug 2022 17:34:00 GMT | Debug | Files server listening on port 3501
