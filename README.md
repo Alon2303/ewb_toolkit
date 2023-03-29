@@ -20,7 +20,7 @@
 <br>
 
 * ### Technology stack:
-    > Express, React, MariaDb  
+    > Express, React, nodrJs,sql, no-sql  
 * ### Status:
     > Alpha  
 * ### Screenshots:
