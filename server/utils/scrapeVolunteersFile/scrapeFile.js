@@ -1,16 +1,11 @@
 //get file from google docs
 // convert to json
+// convert to english
 // save to temp file as db
 import * as XLSX from "xlsx/xlsx.mjs";
 import fs from "fs";
 
 XLSX.set_fs(fs);
-
-// const FILE_PATH = "E:/CHrome Downloads/ewb/volunteers011222.xlsx"
-
-// export default class ScrapeFile {
-
-// }
 
 (() => {
   const file = XLSX.readFileSync(
