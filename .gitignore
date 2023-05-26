@@ -3,3 +3,4 @@ server/files/large_test.mp4
 **/server/logs/
 server/files/testfile.jpg
 server/files/.env
+server/utils/scrapeVolunteersFile/volunteers.json
