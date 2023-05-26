@@ -5,7 +5,7 @@ import { connect, createSchema, createTable, populatedata } from '../db/db.js';
 XLSX.set_fs(fs);
 
 export default class ScrapeVolunteersFile {
-  _filePath = "E:/CHrome Downloads/ewb/volunteers011222.xlsx";
+  _filePath;
   _file;
   _jsondata = {};
 

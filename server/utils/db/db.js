@@ -11,8 +11,8 @@ const client = new Client({
   port: 5432,
 });
 
-const SCHEMA_NAME = "vat"
-const TABLE_NAME = "vat";
+const SCHEMA_NAME = "volunteer"
+const TABLE_NAME = "volunteer";
 
 export const connect = async () => {
     console.log('connecting...');
@@ -56,7 +56,9 @@ export const populatedata = async (volunteersData) => {
     try {
         const volunteersPromise = [];
         for(const volunteer of volunteersData) {
-            console.log(volunteer["שם מלא באנגלית"]);
+
+            if(typeof volunteer["תאריך הצטרפות לארגון"] === "string") volunteer["תאריך הצטרפות לארגון"] = new Date(volunteer["תאריך הצטרפות לארגון"]).getFullYear();
+    
             volunteersPromise.push(client.query(`INSERT INTO ${SCHEMA_NAME}.${TABLE_NAME}
             (v_uid, heb_full_name, eng_full_name, email, gender, "role", team, faculty, department, "year", since, phone)
             VALUES(
