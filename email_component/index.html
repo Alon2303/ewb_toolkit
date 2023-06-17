@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email Sender</title>
+</head>
+<body>
+  <h1>Email Sender</h1>
+  <form action="/send-email" method="POST">
+    <label for="to">To:</label>
+    <input type="text" id="to" name="to" required><br>
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" name="subject" required><br>
+    <label for="text">Text:</label>
+    <textarea id="text" name="text" required></textarea><br>
+    <input type="submit" value="Send Email">
+  </form>
+</body>
+</html>
