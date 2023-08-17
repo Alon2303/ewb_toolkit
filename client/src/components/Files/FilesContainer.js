@@ -1,331 +1,504 @@
-import React, { Component } from 'react'
-import File from './File';
-import './FilesContainer.css'
-import Folder from './Folder'
-import axios from 'axios'
-import {FaLevelUp} from 'react-icons/lib/fa'
-import FilesSidebar from './FilesSidebar';
-import { CircularProgress, Fade } from '@mui/material';
+import React, { Component } from 'react';
+import axios from 'axios';
 import Grid from "@mui/material/Grid";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+
 import SideBar from "../sidebar/SideBar";
 import AppBar from "../appBar/AppBar";
+import Button from '@mui/material/Button'; // Import Button component
+import Fade from '@mui/material/Fade'; // Import Fade component
+import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress component
+import Folder from './Folder';
+import File from './File';
+import BreadcrumbBar from './BreadcrumbBar';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'; // Import the CloudUpload icon
+import FilePreview from './filePreview';
 
-const ROWSIZE = 6;
+import { ThemeProvider } from '@material-ui/core/styles';
+import theme from '../../theme';
+import { resolvePath } from 'react-router-dom';
 
-var updateLoop;
+const ROWSIZE = 10;
+const NUM_CHARS_DISPLAY = 19;
 
 export default class FilesContainer extends Component {
-    constructor(props){
-        
+    constructor(props) {
         super(props);
         this.state = {
-            allContent : [],
-            files : [],
-            folders : [],
-            filesArray : [],
-            foldersArray : [],
-            currentFolder :'',
-            filesDict : {},
-            selectedCount : 0,
-            loading : false,
-            // updateLoop : setInterval(()=>this.getFilesList(), 20*1000) //Update files list every 20 seconds - APP UPDATES AUTOMATICALLY -> CREATES MORE API CALLS = $$$
+            currentFolder: '',
+            itemsArray: [],
+            loading: false,
+            filesDict: {},
+            selectedCount: 0,
+            previewOpen: false,
+            previewContent: null,
+            previewFilename: '',
+            currentPath: [],
+            allContent: [],
+        };
+        this.changeFolder = this.changeFolder.bind(this); // Bind the function
+        this.handlePreview = this.handlePreview.bind(this); // Bind the function
+        this.handleBreadcrumbClick = this.handleBreadcrumbClick.bind(this);
+        this.resetSelection = this.resetSelection.bind(this); // Bind the function
+
+
+    }
+
+    async componentDidMount() {
+        await this.getFilesList('');
+    }
+
+
+    async getFilesList(subdirectory) {
+        try {
+            const encodedSubdirectoryPath = encodeURIComponent(subdirectory);
+            console.log('Encoded subdirectory path:', encodedSubdirectoryPath);
+            const response = await axios.get(`http://localhost:3501/list/${encodedSubdirectoryPath}`);
+            const data = response.data;
+            // console.log('Data:', data);
+            const filesDict = {};
+            // Set type property for files
+            data.files.forEach((filename) => {
+                filesDict[filename] = { name: filename, selected: false, type: 'file' };
+            });
+            // Set type property for folders
+            data.folders.forEach((folderName) => {
+                filesDict[folderName] = { name: folderName, selected: false, type: 'folder' };
+            });
+
+            this.setState(
+                {
+                    allContent: [...data.files, ...data.folders], // Combine files and folders
+                    filesDict,
+                },
+                () => {
+                    this.mapItems();
+                }
+            );
+        } catch (error) {
+            // Handle error
+            console.error('Error fetching data:', error);
         }
-        window.addEventListener('onselectionchange', (event) => {
-            event.preventDefault();
+    }
+
+
+    async changeFolder(folderName) {
+        console.log('changeFolder:', folderName);
+        await this.setState({ currentFolder: folderName, currentPath: [...this.state.currentPath, folderName] });
+        this.getFilesList(this.state.currentPath.join('/'));
+        // Other logic    
+    }
+
+
+    handleOverwriteDialogOpen = () => {
+        this.setState({ overwriteDialogOpen: true });
+    };
+
+    handleOverwriteDialogClose = () => {
+        this.setState({ overwriteDialogOpen: false });
+    };
+
+    handleNewFileNameDialogOpen = () => {
+        this.setState({ newFileNameDialogOpen: true });
+    };
+
+    handleNewFileNameDialogClose = () => {
+        this.setState({ newFileNameDialogOpen: false });
+    };
+
+    handleNewFileNameChange = (event) => {
+        this.setState({ newFileName: event.target.value });
+    };
+
+    handleOverwriteConfirm = () => {
+        // Perform the necessary action, e.g., overwrite the file
+        this.handleOverwriteDialogClose();
+    };
+
+    handleRenameConfirm = () => {
+        // Perform the necessary action, e.g., update the file name
+        this.handleNewFileNameDialogClose();
+    };
+
+
+    mapItems() {
+        const { allContent, currentFolder, filesDict } = this.state;
+
+        const itemsInCurrentFolder = allContent.filter(item => {
+            const itemName = item.substring(currentFolder.length); // Remove the folder path prefix
+            return itemName.startsWith('/') ? false : true; // Exclude items with subdirectories
         });
-        this.inputRef = React.createRef();
+
+        const combinedItemsArray = this.createTableArray(itemsInCurrentFolder);
+
+        const itemsArray = combinedItemsArray.map((row) => {
+            return row.map((item) => {
+                const { name, type } = filesDict[item];
+                const truncatedName = name.length > NUM_CHARS_DISPLAY ? name.substring(0, NUM_CHARS_DISPLAY) : name;
+                return {
+                    shortName: truncatedName,
+                    name: name,
+                    type: type === 'file' ? 'file' : 'folder'
+                };
+            });
+        });
+
+        this.setState({
+            itemsArray
+        });
     }
 
-    async componentDidMount(){
-        await this.getFilesList(); 
-    }
 
-    async getFilesList() {
-        const fileNames = await axios.get(`http://localhost:3501/`);
 
-        const allContent = fileNames.data;
-        if (allContent) {
-            var filesDict = {};
-            allContent.map(filename => filesDict[filename] = { filename, selected: false });
-            await this.setState(prevState => { return { ...prevState, allContent, filesDict }; });
-            await this.mapItems();
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.currentFolder !== this.state.currentFolder) {
+            this.mapItems();
+            this.resetSelection();
         }
     }
 
-    async mapItems(){
-        var files = [];
-        var folders = [];
-        const folderLevel = this.state.currentFolder.split("/").length - 1;
-        for (var i = 0; i< this.state.allContent.length; i++){
-            var item = this.state.allContent[i];
-            var itemLevel = item.split("/").length - 1;
-            if (itemLevel < folderLevel || !item.includes(this.state.currentFolder) || item == this.state.currentFolder)
-                continue;
-            if (itemLevel <= folderLevel && item[item.length-1] != '/'){
-                files.push(item);
-            }
-            if (itemLevel <= folderLevel + 1 && item[item.length-1] == '/' ){
-                folders.push(item);
-            }
-        }
-        const filesArray = this.createTableArray(files);
-        const foldersArray = this.createTableArray(folders);
-        await this.setState(prevState => {return {...prevState, files, folders, filesArray, foldersArray}});
-    }
 
-    createTableArray(array, rowSize=ROWSIZE){
-        var split = [];
-        const newArr = [...array]
-        while(newArr.length) {
-            split.push(newArr.splice(0,rowSize));
+    createTableArray(array, rowSize = ROWSIZE) {
+        const split = [];
+        const newArr = [...array];
+        while (newArr.length) {
+            split.push(newArr.splice(0, rowSize));
         }
         return split;
     }
 
-    // async refreshFiles(){
-    //     await this.getFilesList();
-    // }
 
-    async changeFolder(folderName){
-        console.log('change folder ', folderName)
-        const currentFolder = folderName;
-        await this.setState({currentFolder})
-        await this.mapItems();
-        await this.resetSelection();
-    }
+    handleFolderDoubleClick = async (event, name) => {
+        event.stopPropagation();
+        console.log('handleFolderDoubleClick:', name);
+        const { filesDict } = this.state;
 
-    async resetSelection(ignoredFile=''){
-        const filesDict = {...this.state.filesDict};
-        var found = false;
-        Object.entries(filesDict).map(([key, val])=> {
-            if (key == ignoredFile){
-                found = true;
-                filesDict[key].selected = true;
-                return;
-            }
-            filesDict[key].selected = false;
-        });
-        await this.setState({filesDict, selectedCount: found ? 1 : 0});
-    }
+        const selectedItem = filesDict[name];
+        // it is supposed to be a folder but just in case
+        if (selectedItem.type === 'file') {
+            // If it's a file, handle the preview
 
-    getShortFolderName(){
-        var tree = this.state.currentFolder.split('/');
-        var shortName =  this.state.currentFolder != '' ? tree[tree.length-2] : 'EWB' ;
-        return shortName;
-    }
-
-    async levelUp(event){
-        // if (event.detail >= 2 && this.state.currentFolder != ''){
-        if (this.state.currentFolder != ''){
-            var currentFolder = this.state.currentFolder;
-            currentFolder = currentFolder.substring(0, currentFolder.length-1);
-            var parentFolder = currentFolder.substring(0, currentFolder.lastIndexOf('/'));
-            parentFolder = parentFolder == '' ? parentFolder : parentFolder+'/'
-            console.log(parentFolder);
-            await this.changeFolder(parentFolder);
-        }
-    }
-
-    selectFile(filename, multiselect=false){
-        const dict = this.state.filesDict;
-        if (!dict[filename].selected)
-            this.setState({selectedCount: this.state.selectedCount + 1})
-        else
-            this.setState({selectedCount: this.state.selectedCount - 1})
-        
-        if (!multiselect){
-            if (this.state.selectedCount == 0 )
-                dict[filename].selected = !dict[filename].selected;   
-            else
-                this.resetSelection(filename);
-        }
-        else{
-            if (!(dict[filename].selected && this.state.selectedCount > 0 ))
-                dict[filename].selected = !dict[filename].selected;
-            else
-                dict[filename].selected = false;
-        }
-        this.setState(prevState => {return {...prevState, filesDict : dict}});
-        
-    }
-
-    downloadFiles = (event, filesList) => {
-        console.log(filesList);
-        filesList.map(async file => await this.handleFileClick(event, file, true));
-    } 
-    
-    deleteFiles = async (event, filesList) => {
-        this.setState({loading:true})
-        filesList.map(async filename => {
-            console.log('delete', filename);
-            await axios.delete(`http://localhost:3501/${filename.replaceAll('/','%2F')}`);
-        });
-        this.resetSelection();
-        setTimeout(async ()=>{
-            await this.getFilesList(); 
-            this.setState({loading:false}) 
-        }, 1000);
-    } 
-
-    openFileDialog = () => {
-        // console.log('upload click');
-        this.inputRef.current.click();
-    }
-
-    handleFileChange = async event => {
-        const fileObj = [...event.target.files];
-        if (!fileObj) {
-          return;
-        }
-        let filesDictionary = Object.assign({}, ...fileObj.map((x) => ({[this.state.currentFolder+x.name]: x})));
-        console.log(filesDictionary);
-
-        var fileKeys = fileObj.map(file => this.state.currentFolder+file.name);
-        console.log(fileKeys);
-
-        var urlsDictionary = (await axios.post(`http://localhost:3501/`, {fileKeys})).data;
-        console.log(urlsDictionary);
-        for(var key of fileKeys){
-            this.uploadFile(key, urlsDictionary[key], filesDictionary[key])
+            console.log('Previewing file: handleFolderDC', name);
+            // this.handlePreview(event, name);
+        } else if (selectedItem.type === 'folder') {
+            // If it's a folder, enter the folder
+            console.log('Navigating to folder:', name);
+            await this.changeFolder(name);
+            console.log('Current folder after navigation:', this.state.currentFolder);
+            // this.getFilesList(this.state.currentFolder);
         }
     };
 
-    uploadFile = async(key, url, file) => {
-        console.log(key, url, file);
-        var response = await axios.put(url, {file});
-        console.log(response);
-    }
-    
-    handleFileClick = async(event, filename, force=false) =>{
-        event.stopPropagation();
-        if (force || event.detail >= 2){
-            console.log(filename);    
-            var url = await axios.get(`http://localhost:3501/${filename.replaceAll('/','%2F')}`);
-            console.log(url.data)
-            var response = await axios.get(url.data);
-            fetch(
-                url.data
-              ).then((response) => {
-                response.blob().then((blob) => {
-                  let url = window.URL.createObjectURL(blob);
-                  window.open(url);
-                //   let a = document.createElement("a");
-                //   a.href = url;
-                //   a.download = filename.substring(this.state.currentFolder.length);
-                //   a.click();
-                });
-            });
-        }
-        else if (event.detail == 1){
-            console.log("file click");    
-            this.selectFile(filename, event.ctrlKey);
-        }
+
+    handleBreadcrumbClick = (index) => {
+        const newPath = index.slice(); // Create a shallow copy of the array
+        const newCurrentFolder = newPath[newPath.length - 1] || '';
+        console.log('New current folder:', newCurrentFolder);
+        console.log('New path:', newPath);
+
+        // Construct the full path by joining the newPath array with '/'
+        const fullNewPath = newPath.join('/');
+
+
+        this.setState(
+            {
+                currentFolder: newCurrentFolder,
+                currentPath: newPath,
+            },
+            () => this.getFilesList(fullNewPath) // Update the folder listing
+        );
+    };
+
+
+    resetSelection = () => {
+        const { filesDict } = this.state;
+        const updatedFilesDict = { ...filesDict }; // Create a copy of the object
+        Object.keys(updatedFilesDict).forEach((key) => {
+            updatedFilesDict[key].selected = false;
+        });
+        this.setState({ filesDict: updatedFilesDict, selectedCount: 0 });
+    };
+
+
+    selectFile(filename) {
+        const { filesDict } = this.state;
+        filesDict[filename].selected = !filesDict[filename].selected;
+        this.setState({
+            filesDict,
+            selectedCount: filesDict[filename].selected
+                ? this.state.selectedCount + 1
+                : this.state.selectedCount - 1
+        });
     }
 
-    bgcolor = () => {return this.state.loading? '#b9b9b9' : 'white'}
+    // async downloadFiles() {
+    //     const { filesDict } = this.state;
+    //     const selectedFiles = Object.keys(filesDict).filter(
+    //         (key) => filesDict[key].selected
+    //     );
+    //     const zipName = await axios.post(
+    //         `http://localhost:3501/download`,
+    //         selectedFiles
+    //     );
+    //     const url = await axios.get(
+    //         `http://localhost:3501/${zipName.data.replaceAll('/', '%2F')}`
+    //     );
+    //     // Download the zip file
+    //     window.open(url.data);
+    // }
+
+    async deleteFiles() {
+        const { filesDict } = this.state;
+        const selectedFiles = Object.keys(filesDict).filter(
+            (key) => filesDict[key].selected
+        );
+        await axios.post(`http://localhost:3501/delete`, selectedFiles);
+        await this.getFilesList();
+    }
+
+    handlePreview = async (event, path, filename) => {
+        console.log('handlePreview called');
+        console.log('filename:', filename);
+        event.stopPropagation();
+        
+        let url;
+
+        // Construct the URL for the preview route
+        if (path === undefined || path === null || path === '') {
+            url = `http://localhost:3501/content/${encodeURIComponent(filename)}`;
+        } else {
+            url = `http://localhost:3501/content/${path}/${encodeURIComponent(filename)}`;
+        }
+
+
+        console.log('url:', url);
+        try {
+          const response = await axios.get(url, { responseType: 'blob' }); // Set responseType to 'blob'
+          const blob = response.data;
+      
+          const fileReader = new FileReader();
+      
+          fileReader.onload = (event) => {
+            const base64Content = event.target.result;
+            // console.log('Base64 Content:', base64Content);
+      
+            this.setState({
+              previewOpen: true,
+              previewFilename: filename,
+              previewContent: base64Content,
+            });
+          };
+      
+          fileReader.readAsDataURL(blob); // Convert the Blob to base64
+      
+        } catch (error) {
+          console.log('Error occurred while fetching file for preview:', error);
+        }
+      };
+      
+      
+
+
+    handleClosePreview = () => {
+        this.setState({
+            previewOpen: false,
+            previewContent: null
+        });
+    };
+
+
+    handleUpload = async (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            try {
+                const reader = new FileReader();
+
+                reader.onload = async (event) => {
+                    const formData = new FormData();
+                    const encodedFileName = encodeURIComponent(file.name);
+                    const path = this.state.currentPath.join('/');
+                    console.log('encodedFileName:', encodedFileName);
+
+                    formData.append('file', file, encodedFileName);
+                    formData.append('path', this.state.currentFolder);
+
+                    console.log('path:', path);
+                    console.log('currentFolder:', this.state.currentFolder);
+                    try {
+                        const response = await axios.post(
+                            `http://localhost:3501/upload/${path}`,
+                            formData
+                        );
+
+                        if (response.data.message === 'File already exists') {
+                            // Handle overwrite here
+                            const overwriteConfirmed = window.confirm(
+                                `The file "${file.name}" already exists. Do you want to overwrite it?`
+                            );
+
+                            if (overwriteConfirmed) {
+                                // Overwrite the file
+                                const overwriteResponse = await axios.post(
+                                    `http://localhost:3501/upload/${this.state.currentPath}?overwrite=true`,
+                                    formData
+                                );
+                                console.log('Overwrite response:', overwriteResponse.data);
+                            }
+                        } else {
+                            console.log('Upload response:', response.data);
+                        }
+                    } catch (error) {
+                        console.error('Error uploading file:', error);
+                    }
+
+                    // Perform any necessary updates after successful upload
+                    await this.getFilesList(this.state.currentPath.join('/'));
+                    // Refresh the file list
+                };
+
+                reader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    };
+
+
 
     render() {
+        const {
+            currentPath,
+            itemsArray,
+            loading,
+            previewOpen,
+            previewContent,
+            previewFilename,
+            overwriteDialogOpen,
+            newFileNameDialogOpen,
+            newFileName,
+        } = this.state;
+
         return (
-    <Grid container>
-        <Grid item xs={12}>
-          <AppBar />
-        </Grid>
-        <Grid container direction={'row'}> 
-        <Grid item xs={2}>
-          <SideBar />
-        </Grid>
-        <Grid item xs={10}>
-        <>
-        <Grid 
-            container
-            direction="column"
-            justifyContent="flex-start"
-            alignItems="stretch"
-        >
-                    <Grid item xs={12}>
-        <div className={`files-container${this.state.loading ? ' darken': ''}`}
-            onClick={()=>this.resetSelection()} 
-            >
-                <h2>
-                    {this.state.currentFolder != '' && <FaLevelUp className='up-arrow' onClick={(e)=>this.levelUp(e)}></FaLevelUp>}
-                    {this.getShortFolderName()}
-                </h2>
-                <Fade className='fade-box'
-                    in={this.state.loading}
-                    style={{
-                        transitionDelay: this.state.loading ? '100ms' : '0ms',
-                    }}
-                    unmountOnExit
-                    >
-                    <CircularProgress />
-                </Fade>
-                <table>
-                    <tbody>
-                        {this.state.foldersArray.map((row, i) => {
-                            return (
-                                <tr key={`row_${i}`}>
-                                    {row.map((folder, j)=>{
-                                        return (
-                                            <td key={`folder${i}_${j}`}>
-                                                <Folder 
-                                                    foldername={folder} 
-                                                    currentFolder={this.state.currentFolder} 
-                                                    folderClicked={(folderName)=> this.changeFolder(folderName)}
-                                                >
-                                                </Folder>
-                                            </td>
-                                        )
-                                    })}
-                                </tr>
-                            )
-                        })}
-                        {this.state.filesArray.map((row, i) => {
-                            return (
-                                <tr key={`row_${i}`}>
-                                    {row.map((file, j)=>{
-                                        if (this.state.filesDict[file])
-                                        return (
-                                            <td key={`file_${i}_${j}`}>
-                                                <File filename={file} 
-                                                currentFolder={this.state.currentFolder} 
-                                                selected={this.state.filesDict[file].selected}
-                                                selectFile = {(filename, multiselect)=> this.selectFile(filename, multiselect)}
-                                                resetSelection = {(filename)=>this.resetSelection(filename)}
-                                                handleFileClick = {(event)=>this.handleFileClick(event, file)}
-                                                >
-                                                </File>
-                                            </td>
-                                        )
-                                    })}
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
-            </div>
-        </Grid>
-        <Grid item xs={12}>
-        <FilesSidebar show={this.state.selectedCount > 0} 
-            files={this.state.filesDict} 
-            currentFolder={this.state.currentFolder}
-            downloadFiles={(event, filesList)=>this.downloadFiles(event, filesList)}
-            deleteFiles={(event, filesList)=>this.deleteFiles(event, filesList)}
-            uploadClick={()=>this.openFileDialog()}
-            >
+            <ThemeProvider theme={theme}>
+                <AppBar />
+                <Grid container>
+                    <Grid item xs={2}>
+                        <SideBar />
+                    </Grid>
+                    <Grid item xs={10}>
+                        <div
+                            className={`files-container${loading ? ' darken' : ''}`}
+                            onClick={this.resetSelection}
+                        >
+                            {/* BreadcrumbBar */}
+                            <BreadcrumbBar
+                                currentPath={currentPath}
+                                handleBreadcrumbClick={this.handleBreadcrumbClick}
+                            />
+                            <Fade
+                                className="fade-box"
+                                in={loading}
+                                style={{ transitionDelay: loading ? '100ms' : '0ms' }}
+                                unmountOnExit
+                            >
+                                <CircularProgress />
+                            </Fade>
+
+                            <div className="row-container">
+                                {itemsArray.map((row, rowIndex) => (
+                                    <Grid container direction="row" key={`row_${rowIndex}`}>
+                                        {row.map((item) => (
+                                            <div
+                                                key={item.name}
+                                                className="item-wrapper"
+                                                title={item.name}
+                                            >
+                                                {item.type === 'folder' ? (
+                                                    <Folder
+                                                        folderData={item}
+                                                        foldername={item.shortName}
+                                                        currentFolder={this.state.currentFolder}
+                                                        onSelect={this.handleSelect}
+                                                        onDoubleClick={this.handleFolderDoubleClick}
+                                                        folderClicked={this.changeFolder}
+                                                    />
+                                                ) : (
+                                                    <File
+                                                        fileData={item}
+                                                        filename={item.shortName}
+                                                        fullName={item.name}
+                                                        onSelect={this.handleSelect}
+                                                        onDoubleClick={(event) =>
+                                                            this.handlePreview(event, this.state.currentPath.join('/'), item.name)
+                                                        }
+                                                        onPreview={(event) =>
+                                                            this.handlePreview(event, this.state.currentPath.join('/'), item.name)
+                                                        }
+                                                        currentFolder={this.state.currentFolder}
+                                                        fullPath={this.state.currentPath.join('/')}
+                                                        resetSelection={this.resetSelection}
+                                                        getFilesList={() =>
+                                                            this.getFilesList(
+                                                                this.state.currentPath.join('/')
+                                                            )
+                                                        }
+                                                    />
+                                                )}
+                                            </div>
+                                        ))}
+                                    </Grid>
+                                ))}
+                            </div>
+                        </div>
+                    </Grid>
+                </Grid>
                 <input
-                    style={{display: 'none'}}
-                    ref={this.inputRef}
-                    type="file"
-                    onChange={this.handleFileChange}
+                    accept="/*"
+                    id="upload-file-button"
                     multiple
+                    type="file"
+                    style={{ display: 'none' }}
+                    onChange={this.handleUpload}
+                    name="file"
                 />
-            </FilesSidebar>
-        </Grid>
-        </Grid>
-            </>
-        </Grid>
-        </Grid>
-      </Grid>
-        )
+                <label htmlFor="upload-file-button">
+                    <Button variant="outlined" component="span" startIcon={<CloudUploadIcon />}>
+                        Upload
+                    </Button>
+                </label>
+                <Dialog
+                    open={previewOpen}
+                    onClose={this.handleClosePreview}
+                    aria-labelledby="preview-dialog-title"
+                    aria-describedby="preview-dialog-description"
+                >
+                    <DialogTitle id="preview-dialog-title">Preview</DialogTitle>
+                    <DialogContent>
+                        {previewOpen && previewContent && (
+                            <FilePreview fileContent={previewContent} filename={previewFilename} />
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClosePreview} color="primary">
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                {/* Overwrite dialog */}
+                <Dialog open={overwriteDialogOpen} onClose={this.handleOverwriteDialogClose}>
+                    {/* ... Your overwrite dialog content ... */}
+                </Dialog>
+
+                {/* New file name dialog */}
+                <Dialog open={newFileNameDialogOpen} onClose={this.handleNewFileNameDialogClose}>
+                    {/* ... Your new file name dialog content ... */}
+                </Dialog>
+            </ThemeProvider>
+        );
     }
+
 }

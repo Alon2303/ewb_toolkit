@@ -1,26 +1,29 @@
 .files-container {
     min-height: 81vh;
     overflow: auto;
-    background-color: #fff;
+    margin-left: 3px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    border-radius: 10px;
+    
+    background-color: #e3f2fd;
     order: 2;
     flex-grow: 1;
 }
 
-.file{
-    width: 120px;
-    padding: 2px;
 
-}
-
+/* File path */
 .files-container h2 {
     text-align: center;
+    color: #0d47a1;
+    font-weight: bolder;
+    font-size: 30px;
+    margin-bottom: 10px;
 }
 
-.files-container td {
-    width: 120px;
-    margin-left: 3px;
-    margin-right: 3px;
-}
+
 
 .up-arrow {
     vertical-align: middle;
@@ -40,7 +43,15 @@
     animation: fadeIt 1s; 
 }
 
+.fixed-size-card {
+    width: calc(100% / ROWSI1ZE - 0.6rem); /* Adjust the margin and width as needed */
+    /* Add other styles for the card */
+  }
+
+
+  
 @keyframes fadeIt {
     0%   { background-color: #FFFFFF; }
     100%  { background-color: #b9b9b9; }
 }
+
