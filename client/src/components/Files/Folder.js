@@ -8,6 +8,8 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import { makeStyles } from '@mui/styles';
+import { fileIcons } from './fileIcons';
+
 
 const useStyles = makeStyles({
   root: {
@@ -61,23 +63,15 @@ const Folder = (props) => {
               transition: "opacity 0.3s ease-in-out",
             }}
           />
-          <FolderIcon color="primary" sx={{ fontSize: 120 }} />
+          {/* <FolderIcon color="primary" sx={{ fontSize: 120 }} /> */}
+          { fileIcons['folder'] }
+
           <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
             {props.folderData.name}
           </Typography>
         </div>
       </CardContent>
-      <CardActions>
-        <Button size="small" onClick={() => props.previewFile(props.foldername)}>
-          Preview
-        </Button>
-        <Button size="small" onClick={() => props.downloadFile(props.foldername)}>
-          Download
-        </Button>
-        <Button size="small" onClick={() => props.deleteFile(props.foldername)}>
-          Delete
-        </Button>
-      </CardActions>
+
     </Card>
   );
 };

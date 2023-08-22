@@ -1,0 +1,30 @@
+/* Context menu container */
+.context-menu {
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    width: 160px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Context menu items */
+.context-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.context-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Add more styles as needed */

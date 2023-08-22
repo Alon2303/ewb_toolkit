@@ -6,7 +6,6 @@ const LOCAL_FOLDER = path.join(__dirname, 'db');
 
 const listFiles = async (folder) => {
     const folderPath = path.join(LOCAL_FOLDER, folder);
-    
     try {
         const items = await fs.promises.readdir(folderPath);
         

@@ -6,6 +6,7 @@ import MovieOutlinedIcon from '@mui/icons-material/MovieOutlined';
 import SlideshowOutlinedIcon from '@mui/icons-material/SlideshowOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
 const iconStyle = {
     fontSize: '80px', // Adjust the icon size here
@@ -28,6 +29,8 @@ const fileIcons = {
     pptx: <SlideshowOutlinedIcon style={iconStyle} />,
     zip: <ArchiveOutlinedIcon style={iconStyle} />,
     rar: <ArchiveOutlinedIcon style={iconStyle} />,
+    else: <InsertDriveFileOutlinedIcon style={iconStyle} />,
+    folder: <FolderOpenIcon style={iconStyle} />,
     // Add more extensions and icons as needed
 };
 

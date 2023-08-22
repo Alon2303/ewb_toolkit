@@ -1,11 +1,11 @@
 .files-container {
     min-height: 81vh;
     overflow: auto;
-    margin-left: 3px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 10px;
-    padding-bottom: 30px;
+    /* margin-left: 0.001px; */
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    padding-top: 0.3rem;
+    margin-bottom: 0.1rem;
     border-radius: 10px;
     
     background-color: #e3f2fd;
@@ -13,27 +13,21 @@
     flex-grow: 1;
 }
 
-
-/* File path */
-.files-container h2 {
-    text-align: center;
-    color: #0d47a1;
-    font-weight: bolder;
-    font-size: 30px;
-    margin-bottom: 10px;
-}
-
-
-
-.up-arrow {
-    vertical-align: middle;
-    cursor: pointer;
-}
-
 .fade-box {
     position: fixed;
     top: 45%;
     left: 45%;
+}
+
+.item-wrapper{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: flex-start;
+    margin: 0px !important;
+
 }
 
 .files-container.darken {
@@ -43,12 +37,55 @@
     animation: fadeIt 1s; 
 }
 
-.fixed-size-card {
-    width: calc(100% / ROWSI1ZE - 0.6rem); /* Adjust the margin and width as needed */
-    /* Add other styles for the card */
-  }
 
+.row-container {
+    display: flex-inline;
+    /* grid-template-columns: repeat(auto-fill, minmax(0.6rem, 0.00005fr));
+    margin: 0.5rem; */
+    align-items: center;
+    align-content: right;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    flex-direction: row;
+    place-items: center;
+    /* margin: 0.5rem;
+    padding: 0.5rem; */
+    
+    /* background-color: #046ab3; */
+    order: 2;
+    flex-grow: 1;
 
+}
+
+.upload-button-container {
+    position: fixed;
+    bottom: 20px;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0FD1CC; /* Use a vibrant color */
+    border-radius: 50%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3); /* Add shadow */
+    z-index: 1;
+    transition: background-color 0.3s ease-in-out;
+    opacity: 0.75;
+}
+
+.upload-button-container:hover {
+    background-color: #04D155; /* Darken the background on hover */
+    opacity: 1;
+}
+
+.upload-button-container:active {
+    background-color: #29347e; /* Change color on click */
+}
+
+.upload-button-icon {
+    font-size: 360px; /* Increase the icon size */
+    color: rgb(255, 255, 255); /* Set the icon color */
+}
   
 @keyframes fadeIt {
     0%   { background-color: #FFFFFF; }

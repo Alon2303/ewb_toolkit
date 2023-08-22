@@ -38,13 +38,13 @@ const theme = responsiveFontSizes(
         default: '#1CE8E2', // light blue
       },
       primary: {
-        main: '#EB7657', // indigo
+        main: '#613659', // indigo
       },
       secondary: {
         main: '#1976d2', // blue
       },
       sidebar: {
-        main: '#1CE8E2', // light blue
+        main: '#D3B1C2', // light blue
         },
       error: {
         main: '#D72A2A', // red
@@ -85,7 +85,8 @@ const theme = responsiveFontSizes(
       MuiListItemIcon: {
         styleOverrides: {
           root: {
-            color: '#1CE8E2',  // light blue
+            color: '#0d47a1',
+            
           },
         },
       },

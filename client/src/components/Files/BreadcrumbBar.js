@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import SearchIcon from '@mui/icons-material/Search';
-import FolderIcon from '@mui/icons-material/Folder'; // Material-UI Folder icon
+import FolderIcon from '@mui/icons-material/Folder';
+import ClearIcon from '@mui/icons-material/Clear';
+import HomeIcon from '@mui/icons-material/Home';
+
 
 import axios from 'axios';
 
@@ -28,10 +30,15 @@ const BreadcrumbBar = ({ currentPath, handleBreadcrumbClick }) => {
     };
 
     return (
-        <div className="breadcrumb-container"> {/* Added a container for styling */}
+        <div className="breadcrumb-container">
             <Breadcrumbs aria-label="breadcrumb">
                 <Link color="inherit" onClick={() => handleBreadcrumbClick([])}>
-                    Home
+                    <span className="breadcrumb-icon">
+                        <HomeIcon fontSize="small" />
+                    </span>
+                    <span className="breadcrumb-folder">
+                        Home
+                    </span>
                 </Link>
                 {currentPath.map((folder, index) => (
                     <Link
@@ -39,10 +46,10 @@ const BreadcrumbBar = ({ currentPath, handleBreadcrumbClick }) => {
                         key={index}
                         onClick={() => handleBreadcrumbClick(currentPath.slice(0, index + 1))}
                     >
-                        <span className="breadcrumb-icon"> {/* Added a span for styling */}
-                            <FolderIcon /> {/* Material-UI Folder icon */}
+                        <span className="breadcrumb-icon">
+                            <FolderIcon fontSize="small" />
                         </span>
-                        {folder} 
+                        <span className="breadcrumb-folder">{folder}</span>
                     </Link>
                 ))}
             </Breadcrumbs>
@@ -53,11 +60,13 @@ const BreadcrumbBar = ({ currentPath, handleBreadcrumbClick }) => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button onClick={handleSearch}>
+                <button className="search-button" onClick={handleSearch}>
                     <SearchIcon />
                 </button>
                 {searchResults.length > 0 && (
-                    <button onClick={clearSearch}>Clear Search</button>
+                    <button className="clear-search-button" onClick={clearSearch}>
+                        <ClearIcon />
+                    </button>
                 )}
             </div>
         </div>

@@ -1,12 +1,11 @@
-const AWS = require('aws-sdk')
+// const AWS = require('aws-sdk')
 const express = require('express');
 const path = require('path');
-const prompts = require('prompts');
 const { LOCAL_FOLDER } = require('../controllers/filesController');
 
 const router = express.Router();
 const fs = require('fs')
-const logger = require('../../utils/logger/logger');
+const logger = require('../../utils/logger/logger.cjs');
 const filesController = require("../controllers/filesController");
 // const { getUser } = require('../../auth/db/users');
 

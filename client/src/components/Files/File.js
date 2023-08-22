@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { makeStyles } from '@mui/styles';
 import DescriptionSharpIcon from '@mui/icons-material/DescriptionSharp';
 import './File.css';
 import { fileIcons } from './fileIcons';
+
+import ContextMenu from './ContextMenu';
 
 import axios from 'axios';
 
@@ -26,9 +29,6 @@ const useStyles = makeStyles({
     }
 });
 
-const LINE_LEN = 9;
-
-
 
 function getFileExtension(filename) {
     return filename.split('.').pop().toLowerCase();
@@ -40,35 +40,22 @@ export default function File(props) {
         raised: false,
         shadow: 1,
     });
+    const [contextMenuVisible, setContextMenuVisible] = useState(false);
+    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    const [fileContextMenuVisible, setFileContextMenuVisible] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
 
-    const [previewOpen, setPreviewOpen] = useState(false);
-    const [previewContent, setPreviewContent] = useState(null);
+    const contextMenuRef = useRef(null); // Ref for the context menu
 
-
-    const getName = (name) => {
-        // console.log(name);
-        if (name.length <= LINE_LEN) {
-            return name;
-        }
-        else if (name.length > LINE_LEN && name.length < 25) {
-            return name.substring(0, LINE_LEN) + '...\n' + name.substring(name.length - (name.length - LINE_LEN));
-        }
-        else {
-            return name.substring(0, LINE_LEN) + '...\n' + name.substring(name.length - LINE_LEN);
-        }
-    }
-
-    const shortName = props.filename;
+    const CLOSE_THRESHOLD = 7000; // Adjust as needed
 
 
-
-    
-    const [downloadUrl, setDownloadUrl] = useState('');
+    // Define a ref to hold the timeout ID
+    const contextMenuTimeoutRef = useRef(null);
 
     const generateDownloadUrl = () => {
         // Generate the download URL here based on your logic
         let generatedDownloadUrl = '';
-
 
         if (props.currentFolder !== undefined && props.currentFolder !== null && props.currentFolder !== '') {
             const subdirectory = encodeURIComponent(props.fullPath);
@@ -86,7 +73,6 @@ export default function File(props) {
 
     const handleDownload = async () => {
         // Download the file
-        
         try {
             let downloadUrl;
 
@@ -102,11 +88,10 @@ export default function File(props) {
                 downloadUrl = `http://localhost:3501/download/${filename}`;
             }
 
-            console.log('Download URL:', downloadUrl);
-
             const response = await axios.get(downloadUrl, {
                 responseType: 'arraybuffer',
             });
+
             // Create a Blob from the response data
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
 
@@ -121,10 +106,7 @@ export default function File(props) {
 
             // Clean up
             window.URL.revokeObjectURL(blobUrl);
-
             props.resetSelection(props.fileData.name);
-            setDownloadUrl(downloadUrl);
-            // console.log('File downloaded successfully', downloadUrl);
 
         } catch (error) {
             console.log('Error occurred while downloading:', error);
@@ -133,22 +115,18 @@ export default function File(props) {
 
     const handleDelete = async (event, filename) => {
         event.stopPropagation(); // Prevent the click event from triggering a preview
-        console.log('delete');
-
         const fullPath = `${props.fullPath}/${filename}`; // Create the full path of the file
-        console.log('full path', fullPath, props.currentFolder);
+
         // Send a request to delete the file using axios or any other method you're using
         try {
             await axios.post(`http://localhost:3501/delete`, [fullPath]);
             console.log('File deleted successfully');
-            console.log('current folder', props.fullPath);
             await props.getFilesList(props.fullPath); // Refresh the file list in the current folder after deletion
         } catch (error) {
             console.error('Error deleting file:', error);
         }
     };
 
-    const [isChecked, setIsChecked] = useState(false);
 
     const handleCheckboxChange = () => {
         if (state.raised) {
@@ -161,19 +139,106 @@ export default function File(props) {
         }
     };
 
-    const openContextMenu = event => {
+    //     event.preventDefault();
+    //     props.onContextMenu(event, filename);
+
+    //     // Clear any existing timeout
+    //     if (contextMenuTimeoutRef.current !== null) {
+    //         clearTimeout(contextMenuTimeoutRef.current);
+    //         console.log('Cleared existing timeout:', contextMenuTimeoutRef.current);
+    //     }
+
+    //     setContextMenuVisible(false);
+    //     props.setAnyContextMenuOpen(false); // Close the context menu and update the state
+
+    //     // Set the context menu as visible and update its position
+    //     setContextMenuPosition({ x: event.clientX, y: event.clientY });
+    //     setContextMenuVisible(true);
+
+    //     // Insert 'this' context menu into the global state
+    //     props.setContextMenuRef(contextMenuRef);
+
+    //     // Set a timeout to automatically close the context menu after 3 seconds
+    //     contextMenuTimeoutRef.current = setTimeout(() => {
+    //         setContextMenuVisible(false);
+    //         props.setAnyContextMenuOpen(false); // Also update anyContextMenuOpen state here
+    //     }, 3000); // Adjust the timeout duration as needed
+
+    //     console.log('Setting timeout:', contextMenuTimeoutRef.current);
+    // };
+
+    const handleContextMenu = (event, filename) => {
         event.preventDefault();
-        console.log('context');
-    }
+        props.onContextMenu(event, filename);
+
+        // TODO: FIX THIS
+        // Close the currently open context menu (if any)
+        // if (contextMenuTimeoutRef.current !== null) {
+        //     clearTimeout(contextMenuTimeoutRef.current);
+        // }
+        
+        setContextMenuVisible(false);
+        props.setAnyContextMenuOpen(false); // Close the context menu and update the state
+
+        // Set the context menu as visible and update its position
+        setContextMenuPosition({ x: event.clientX, y: event.clientY });
+        setContextMenuVisible(true);
+        
+
+        // Insert 'this' context menu into the global state
+        props.setContextMenuRef(contextMenuRef);
+
+        // Set a timeout to automatically close the context menu after X seconds
+        const newTimeout = setTimeout(() => {
+            setContextMenuVisible(false);
+            props.setAnyContextMenuOpen(false);
+
+        }, 3000); // Adjust the timeout duration as needed
+
+        contextMenuTimeoutRef.current = newTimeout;
+    };
+
+    const handleClickOutsideContextMenu = () => {
+        setContextMenuVisible(false);
+        props.setAnyContextMenuOpen(false); // Close the context menu and update the state
+    };
+
+
+    useEffect(() => {
+        if (contextMenuVisible) {
+            // console.log('Adding event listeners');
+            document.body.addEventListener('click', handleClickOutsideContextMenu);
+            // document.body.addEventListener('mousemove', handleMouseMove); // Add mousemove event listener
+        } else {
+            document.body.removeEventListener('click', handleClickOutsideContextMenu);
+            // document.body.addEventListener('mousemove', handleMouseMove); // Add mousemove event listener
+        }
+
+        return () => {
+            document.body.removeEventListener('click', handleClickOutsideContextMenu);
+            // document.body.addEventListener('mousemove', handleMouseMove); // Add mousemove event listener
+
+        };
+    }, [contextMenuVisible, contextMenuPosition]);
+
     return (
         <Card
             className={`${classes.root} ${state.raised ? classes.cardHovered : ""}`}
-            onMouseOver={() => setState({ raised: true, shadow: 3 })}
+            onMouseOver={() => {
+                if (!contextMenuVisible) {
+                    setState({ raised: true, shadow: 3 });
+                }
+            }}
             onMouseOut={() => setState({ raised: false, shadow: 1 })}
+
             onDoubleClick={handlePreview}
+            onContextMenu={(event) => {
+                setState({ raised: false, shadow: 1 });
+                handleContextMenu(event, props.fileData.name);
+            }}
+
             raised={state.raised}
             zdepth={state.shadow}
-            // onDoubleClick={handleClick}
             style={{ width: "200px", height: "180px", margin: "6px" }}
         >
             <CardContent>
@@ -192,8 +257,9 @@ export default function File(props) {
                         onChange={handleCheckboxChange}
                         onDoubleClick={handlePreview}
                     />
-
-                    {fileIcons[getFileExtension(props.fileData.name)]}
+                    {/* if fileicon exists, use it, otherwise use the default file icon */}
+                    
+                    {fileIcons[getFileExtension(props.fileData.name)] || fileIcons['else'] }
                     <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
                         {props.filename}
                     </Typography>
@@ -208,6 +274,24 @@ export default function File(props) {
                     </IconButton>
                 </div>
             </CardContent>
+            {contextMenuVisible && props.openContextMenu && (
+                <ContextMenu
+                    x={contextMenuPosition.x}
+                    y={contextMenuPosition.y}
+                    // onClose={() => {
+                    //     setContextMenuVisible(false);
+                    //     props.onCloseContextMenu();
+                    //     // props.setAnyContextMenuOpen(false); // Close the context menu and update the state
+                    // }}
+                    handleDownload={handleDownload} // Pass the handleDownload function
+                    handlePreview={handlePreview} // Pass the handlePreview function
+                    handleShare={() => { }} // Implement handleShare if needed
+                    handleDelete={(event) => handleDelete(event, props.fileData.name)} // Pass the handleDelete function
+                    // visible={fileContextMenuVisible}
+                    
+                    
+                />
+            )}
         </Card>
     );
 }

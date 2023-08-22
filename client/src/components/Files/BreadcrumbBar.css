@@ -8,34 +8,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
-    background: linear-gradient(135deg, #f06, #09f); /* Color gradient */
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #114B5F, #028090); /* Color gradient */
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease-in-out;
 }
 
 .breadcrumb-container:hover {
-    background: linear-gradient(135deg, #09f, #f06);
+    background: linear-gradient(135deg, #028090, #114B5F);
 }
 
-/* Search box styles */
-.breadcrumb-search {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border-radius: 5px;
-    padding: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.breadcrumb-search input {
-    border: none;
-    outline: none;
-    padding: 5px;
-    width: 150px;
-    border-radius: 5px 0 0 5px;
-}
 
 .breadcrumb-search button {
     background-color: #09f;
@@ -46,4 +29,61 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+  
+.breadcrumb-icon {
+    margin-right: 4px;
+    color: #999;
+}
+  
+.breadcrumb-folder {
+    font-weight: regular;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: hsl(303, 95%, 76%);
+    transition: color 0.3s ease-in-out;
+    text-decoration: none;
+}
+
+.MuiLink-root {
+    text-decoration: none!important;
+    color: #333; /* Set the link color */
+    display: flex;
+    align-items: center; /* Vertically align the icon and text */
+  }
+  
+.breadcrumb-folder:hover {
+    color: whitesmoke;
+}
+  
+.breadcrumb-search {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+  
+.breadcrumb-search input {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+}
+  
+.breadcrumb-search input:focus {
+    border-color: #007bff;
+}
+  
+.search-button,
+.clear-search-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    margin-left: 8px;
+    transition: color 0.3s ease-in-out;
+}
+  
+.search-button:hover,
+.clear-search-button:hover {
+    color: #007bff;
 }

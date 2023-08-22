@@ -1,87 +1,135 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/CloudDownload';
+import PreviewIcon from '@mui/icons-material/Visibility';
+import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import './ContextMenu.css'; // Import your custom CSS file for styling
 
 export default class ContextMenu extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             visible: false,
-            clickX : props.event.clientX,
-            clickY : props.event.clientY
-        }
+            style: {},
+            rootWidth: 0,
+            rootHeight: 0,
+        };
     }
-    
+
     componentDidMount() {
-        document.addEventListener('contextmenu', this._handleContextMenu);
-        document.addEventListener('click', this._handleClick);
-        document.addEventListener('scroll', this._handleScroll);
-    };
+        document.addEventListener('contextmenu', this.handleContextMenu);
+        document.addEventListener('click', this.handleClick);
+        document.addEventListener('scroll', this.handleScroll);
+    }
 
     componentWillUnmount() {
-      document.removeEventListener('contextmenu', this._handleContextMenu);
-      document.removeEventListener('click', this._handleClick);
-      document.removeEventListener('scroll', this._handleScroll);
+        document.removeEventListener('contextmenu', this.handleContextMenu);
+        document.removeEventListener('click', this.handleClick);
+        document.removeEventListener('scroll', this.handleScroll);
     }
-    
-    _handleContextMenu = () => {
-        const event = props.event;
+
+
+    closeContextMenu = () => {
+        this.setState({ visible: false });
+    };
+
+    handleContextMenu = (event) => {
         event.preventDefault();
-        
         this.setState({ visible: true });
-        
-        const clickX = this.state.clientX;
-        const clickY = this.state.clientY;
+
+        const clickX = event.clientX;
+        const clickY = event.clientY;
+
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
-        const rootW = this.root.offsetWidth;
-        const rootH = this.root.offsetHeight;
-        
-        const right = (screenW - clickX) > rootW;
+
+        const right = (screenW - clickX) > this.state.rootWidth;
         const left = !right;
-        const top = (screenH - clickY) > rootH;
+        const top = (screenH - clickY) > this.state.rootHeight;
         const bottom = !top;
-        
+
+        const style = {
+            position: 'fixed',
+            zIndex: 1000,
+            display: 'block',
+        };
+
         if (right) {
-            this.root.style.left = `${clickX + 5}px`;
+            style.left = `${clickX + 5}px`;
+        } else if (left) {
+            style.left = `${clickX - this.state.rootWidth - 5}px`;
         }
-        
-        if (left) {
-            this.root.style.left = `${clickX - rootW - 5}px`;
-        }
-        
+
         if (top) {
-            this.root.style.top = `${clickY + 5}px`;
+            style.top = `${clickY + 5}px`;
+        } else if (bottom) {
+            style.top = `${clickY - this.state.rootHeight - 5}px`;
         }
-        
-        if (bottom) {
-            this.root.style.top = `${clickY - rootH - 5}px`;
-        }
+
+        this.setState({ style });
     };
 
-    _handleClick = (event) => {
-        const { visible } = this.state;
-        const wasOutside = !(event.target.contains === this.root);
-        
-        if (wasOutside && visible) this.setState({ visible: false, });
+
+    handleContextMenuLoad = () => {
+        const rootWidth = this.root.offsetWidth;
+        const rootHeight = this.root.offsetHeight;
+        this.setState({ rootWidth, rootHeight });
     };
 
-    _handleScroll = () => {
-        const { visible } = this.state;
-        
-        if (visible) this.setState({ visible: false, });
-    };
+
     
     render() {
-        const { visible } = this.state;
-        
-        return(visible || null) && 
-            <div ref={ref => {this.root = ref}} className="contextMenu">
-                <div className="contextMenu--option">Share this</div>
-                <div className="contextMenu--option">New window</div>
-                <div className="contextMenu--option">Visit official site</div>
-                <div className="contextMenu--option contextMenu--option__disabled">View full version</div>
-                <div className="contextMenu--option">Settings</div>
-                <div className="contextMenu--separator" />
-                <div className="contextMenu--option">About this app</div>
-            </div>
-    };
+        const { visible, style } = this.state;
+        const { x, y, handleDownload, handlePreview, handleShare, handleDelete } = this.props;
+
+        return (
+            <>
+                {visible && (
+                    <div
+                        ref={(ref) => { this.root = ref; }}
+                        onLoad={this.handleContextMenuLoad}
+                        // onMouseEnter={this.handleMouseEnter}
+                        // onMouseLeave={this.handleMouseLeave}
+                        style={{
+                            ...style,
+                            left: `${x}px`,
+                            top: `${y}px`,
+                            // Other styles...
+                        }}
+                        className="context-menu"
+                    >
+                        <MenuItem className="context-menu-item" onClick={handleDownload}>
+                            <ListItemIcon>
+                                <DownloadIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Download" />
+                        </MenuItem>
+
+                        <MenuItem className="context-menu-item" onClick={handlePreview}>
+                            <ListItemIcon>
+                                <PreviewIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Preview" />
+                        </MenuItem>
+
+                        <MenuItem className="context-menu-item" onClick={handleShare}>
+                            <ListItemIcon>
+                                <ShareIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Share" />
+                        </MenuItem>
+
+                        <MenuItem className="context-menu-item" onClick={handleDelete}>
+                            <ListItemIcon>
+                                <DeleteIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Delete" />
+                        </MenuItem>
+                    </div>
+                )}
+            </>
+        );
+    }
 }
