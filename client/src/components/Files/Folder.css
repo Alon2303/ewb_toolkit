@@ -1,22 +1,29 @@
-.folder {
+/* .folder {
     text-align: center;
     color: royalblue;
     font-weight: bolder;
     font-size: 17px;
     border-radius: 10px;
-}
+} */
 
-.folder pre{
+/* .folder pre{
     text-align: center;
     margin : 10px;
     height: 2rem;
-}
+} */
 
 .folder:hover{
     background-color: rgb(238, 238, 238);
 }
+.folder.selected{
+    background-color: rgb(219, 219, 219);
+} 
 
-.folder svg{
-    filter: drop-shadow(1px 1px 1px purple);
+
+.MuiCard-root{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
 }
-
